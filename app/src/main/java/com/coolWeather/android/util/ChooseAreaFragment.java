@@ -18,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.coolWeather.android.MainActivity;
 import com.coolWeather.android.R;
 import com.coolWeather.android.WeatherActivity;
 import com.coolWeather.android.db.City;
@@ -61,7 +62,6 @@ public class ChooseAreaFragment extends Fragment {
      */
     private Province selectedProvince;
     private City selectedCity;
-    private County selectedCounty;
     private static final String TAG = "ChooseAreaFragment";
     private int currentLevel;
 
@@ -91,13 +91,21 @@ public class ChooseAreaFragment extends Fragment {
                     selectedCity=cityList.get(position);
                     Log.d(TAG,"selectedCity is "+selectedCity);
                     queryCounties();
-                }else if(currentLevel==LEVEL_COUNTY){
-                    String weatherId=countyList.get(position).getWeatherId();
-                    Log.d(TAG,"weatherId is "+weatherId);
-                    Intent intent=new Intent(getActivity(), WeatherActivity.class);
-                    intent.putExtra("weather_id",weatherId);
-                    startActivity(intent);
-                    getActivity().finish();
+                }else if(currentLevel==LEVEL_COUNTY) {
+                    String weatherId = countyList.get(position).getWeatherId();
+                    if (getActivity() instanceof MainActivity) {
+                        Log.d(TAG, "MainActivity weatherId is " + weatherId);
+                        Intent intent = new Intent(getActivity(), WeatherActivity.class);
+                        intent.putExtra("weather_id", weatherId);
+                        startActivity(intent);
+                        getActivity().finish();
+                    } else if (getActivity() instanceof WeatherActivity) {
+                        WeatherActivity activity = (WeatherActivity) getActivity();
+                        activity.drawerLayout.closeDrawers();
+                        activity.swipeRefresh.setRefreshing(true);
+                        Log.d(TAG, "WeatherActivity weatherId is " + weatherId);
+                        activity.requestWeather(weatherId);
+                    }
                 }
             }
         });
@@ -148,6 +156,7 @@ public class ChooseAreaFragment extends Fragment {
             currentLevel=LEVEL_CITY;
         }else{
             int provinceCode=selectedProvince.getProvinceCode();
+            Log.d(TAG,"provinceCode is"+provinceCode);
             String address="http://guolin.tech/api/china/"+provinceCode;
             queryFromServer(address,"city");
         }
@@ -168,6 +177,7 @@ public class ChooseAreaFragment extends Fragment {
         }else{
             int provinceCode=selectedProvince.getProvinceCode();
             int cityCode=selectedCity.getCityCode();
+            Log.d(TAG,"provinceCode is :"+provinceCode+"cityCode is :"+cityCode);
             String address="http://guolin.tech/api/china/"+provinceCode+"/"+cityCode;
             queryFromServer(address,"county");
         }
@@ -192,13 +202,10 @@ public class ChooseAreaFragment extends Fragment {
                     String responseText=response.body().string();
                     boolean result=false;
                     if("province".equals(type)){
-                        Log.d(TAG,"handleProvinceResponse is "+type);
                         result=Utility.handleProvinceResponse(responseText);
                     }else if("city".equals(type)){
-                        Log.d(TAG,"handleCityResponse is "+type);
                         result=Utility.handleCityResponse(responseText,selectedProvince.getId());
                     }else if("county".equals(type)){
-                        Log.d(TAG,"handleCountyResponse is "+type);
                         result=Utility.handleCountyResponse(responseText,selectedCity.getId());
                     }
                     if(result){

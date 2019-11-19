@@ -1,6 +1,8 @@
 package com.coolWeather.android.util;
 
+import android.nfc.Tag;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.coolWeather.android.db.City;
 import com.coolWeather.android.db.County;
@@ -12,10 +14,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+
 /**
  *解析和处理服务器返回的省级数据
  */
 public class Utility {
+    private static final String TAG="Utility";
+
     public static boolean handleProvinceResponse(String response){
         if(!TextUtils.isEmpty(response)){
             try {
@@ -27,6 +32,8 @@ public class Utility {
                     province.setProvinceCode(provinceObject.getInt("id"));
                     province.save();
                 }
+                Log.d(TAG,"省级列表数据已经通过handleProvinceResponse解析并保存,共计"+allProvinces.length()+"个省");
+
                 return true;
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -47,6 +54,7 @@ public class Utility {
                     city.setProvinceId(provinceId);
                     city.save();
                 }
+                Log.d(TAG,"市级列表数据已经通过handleCityResponse解析并保存,共计"+allCities.length()+"个市");
                 return true;
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -67,6 +75,7 @@ public class Utility {
                     county.setCityId(cityId);
                     county.save();
                 }
+                Log.d(TAG,"市级列表数据已经通过handleCountyResponse解析并保存,共计"+allCounties.length()+"个县");
                 return true;
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -80,6 +89,7 @@ public class Utility {
             JSONObject jsonObject=new JSONObject(response);
             JSONArray jsonArray=jsonObject.getJSONArray("HeWeather");
             String weatherContent=jsonArray.getJSONObject(0).toString();
+            Log.d(TAG,"handleWeatherResponse 解析了天气信息");
             return  new Gson().fromJson(weatherContent,Weather.class);
         } catch (JSONException e) {
             e.printStackTrace();
