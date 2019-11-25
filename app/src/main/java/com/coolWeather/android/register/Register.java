@@ -2,6 +2,7 @@ package com.coolWeather.android.register;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
@@ -17,6 +18,7 @@ import com.coolWeather.android.LoginActivity;
 import com.coolWeather.android.MainActivity;
 import com.coolWeather.android.R;
 
+
 public class Register extends AppCompatActivity {
     private static final String TAG = "Register";
 private MyDataBaseHelper dbRegisterHelper;
@@ -29,6 +31,7 @@ private Button registerResult_button;
 String newName;
 String password;
 String passwordAgain;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,7 +102,10 @@ String passwordAgain;
                 if(register(newName,password)){
                     Toast.makeText(Register.this,"注册成功",Toast.LENGTH_SHORT).show();
                     Intent intent=new Intent(Register.this, MainActivity.class);
+                    intent.putExtra("account_Info",newName);
+                    intent.putExtra("password_info",password);
                     startActivity(intent);
+                    finish();
                 }
             }
         }

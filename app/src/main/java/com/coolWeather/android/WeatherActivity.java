@@ -5,6 +5,8 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.app.ActionBar;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -26,6 +28,7 @@ import com.coolWeather.android.db.County;
 import com.coolWeather.android.gson.Forecast;
 import com.coolWeather.android.gson.Weather;
 import com.coolWeather.android.service.AutoUpdateService;
+import com.coolWeather.android.usercenter.UserCenter;
 import com.coolWeather.android.util.HttpUtil;
 import com.coolWeather.android.util.Utility;
 
@@ -34,6 +37,9 @@ import java.io.IOException;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
+
+import static android.view.View.GONE;
+import static android.view.View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
 
 public class WeatherActivity extends AppCompatActivity {
 
@@ -57,11 +63,12 @@ public class WeatherActivity extends AppCompatActivity {
     private Button navButton;
     String weatherString=null;
     SharedPreferences prefs=null;
+    private  LinearLayout first_layout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weather);
-
+        setNavigationBarStatusBarTranslucent(WeatherActivity.this);
         //初始化各种控件
         weatherLayout=(ScrollView)findViewById(R.id.weather_layout);
         titleCity=(TextView)findViewById(R.id.title_city);
@@ -81,6 +88,15 @@ public class WeatherActivity extends AppCompatActivity {
         navButton=(Button)findViewById(R.id.nav_button);
          prefs= PreferenceManager.getDefaultSharedPreferences(this);
          weatherString =prefs.getString("weather",null);
+        first_layout=(LinearLayout)findViewById(R.id.first_layout);
+        first_layout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG,"点击我的");
+                Intent intent=new Intent(WeatherActivity.this, UserCenter.class);
+                startActivity(intent);
+            }
+        });
         if(weatherString!=null){
             Weather weather= Utility.handleWeatherResponse(weatherString);
             mWeatherId=weather.basic.weatherId;
@@ -151,7 +167,7 @@ public class WeatherActivity extends AppCompatActivity {
         HttpUtil.sendOkHttpRequest(weatherUrl, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                runOnUiThread(new Runnable() {
+                    runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         Toast.makeText(WeatherActivity.this,"获取天气信息失败",Toast.LENGTH_SHORT).show();
@@ -222,5 +238,17 @@ public class WeatherActivity extends AppCompatActivity {
             weatherLayout.setVisibility(View.VISIBLE);
             Intent intent=new Intent(this, AutoUpdateService.class);
             startService(intent);
+    }
+
+    public static void setNavigationBarStatusBarTranslucent(Activity activity){
+        if (Build.VERSION.SDK_INT >= 21) {
+            View decorView = activity.getWindow().getDecorView();
+            int option = View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+            decorView.setSystemUiVisibility(option);
+            activity.getWindow().setNavigationBarColor(Color.BLACK);
+            activity.getWindow().setStatusBarColor(Color.BLACK);
+        }
     }
 }

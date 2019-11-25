@@ -1,0 +1,64 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.coolWeather.android.usercenter.PersonalItemView
+        android:id="@+id/nickname_layout"
+        android:layout_width="match_parent"
+        android:background="#fff"
+        android:layout_height="50dp"
+        app:icon="@drawable/people"
+        app:name="昵称"
+        app:data="鱼儿伤"
+        app:show_more="true"
+        app:show_line="true"
+        />
+
+    <com.coolWeather.android.usercenter.PersonalItemView
+        android:id="@+id/phone_layout"
+        android:layout_width="match_parent"
+        android:background="#fff"
+        android:layout_height="50dp"
+        app:icon="@drawable/people"
+        app:name="手机"
+        app:show_more="true"
+        app:show_line="true"
+        />
+
+    <com.coolWeather.android.usercenter.PersonalItemView
+        android:id="@+id/email_layout"
+        android:layout_width="match_parent"
+        android:background="#fff"
+        android:layout_height="50dp"
+        app:icon="@drawable/people"
+        app:name="邮箱"
+        app:show_more="true"
+        app:show_line="true"
+        />
+
+    <com.coolWeather.android.usercenter.PersonalItemView
+        android:id="@+id/password_center_layout"
+        android:layout_width="match_parent"
+        android:background="#fff"
+        android:layout_height="50dp"
+        app:icon="@drawable/people"
+        app:name="密码"
+        app:show_more="true"
+        app:show_line="true"
+        />
+
+    <com.coolWeather.android.usercenter.PersonalItemView
+        android:id="@+id/version_layout"
+        android:layout_width="match_parent"
+        android:background="#fff"
+        android:layout_height="50dp"
+        app:icon="@drawable/people"
+        app:name="版本"
+        app:show_more="true"
+        app:show_line="true"
+        />
+
+</LinearLayout>
